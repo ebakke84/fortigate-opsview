@@ -1,0 +1,83 @@
+{# Jinja2-blokk for config-generatoren. Variabler:
+   opsview_ips: liste med IP-er, admin_port: int, wan_interfaces: liste, extra_admin_ips: liste (valgfri) #}
+config firewall address
+{% for ip in opsview_ips %}
+    edit "opsview-{{ loop.index }}"
+        set subnet {{ ip }}/32
+    next
+{% endfor %}
+{% for ip in extra_admin_ips | default([]) %}
+    edit "mgmt-admin-{{ loop.index }}"
+        set subnet {{ ip }}/32
+    next
+{% endfor %}
+end
+config firewall addrgrp
+    edit "grp-mgmt-allowed"
+        set member {% for ip in opsview_ips %}"opsview-{{ loop.index }}" {% endfor %}{% for ip in extra_admin_ips | default([]) %}"mgmt-admin-{{ loop.index }}" {% endfor %}
+
+    next
+end
+config firewall service custom
+    edit "MGMT-{{ admin_port }}"
+        set tcp-portrange {{ admin_port }}
+    next
+end
+config firewall local-in-policy
+{% for intf in wan_interfaces %}
+    edit {{ 10 + loop.index0 * 2 }}
+        set intf "{{ intf }}"
+        set srcaddr "grp-mgmt-allowed"
+        set dstaddr "all"
+        set service "MGMT-{{ admin_port }}"
+        set schedule "always"
+        set action accept
+        set comments "Opsview REST-API / admin"
+    next
+    edit {{ 11 + loop.index0 * 2 }}
+        set intf "{{ intf }}"
+        set srcaddr "all"
+        set dstaddr "all"
+        set service "MGMT-{{ admin_port }}"
+        set schedule "always"
+        set action deny
+    next
+{% endfor %}
+end
+config system accprofile
+    edit "ro-monitor"
+        set secfabgrp read
+        set ftviewgrp read
+        set authgrp read
+        set sysgrp read
+        set netgrp read
+        set loggrp read
+        set fwgrp read
+        set vpngrp read
+        set utmgrp read
+        set wifi read
+    next
+end
+config system api-user
+    edit "opsview"
+        set accprofile "ro-monitor"
+        set vdom "root"
+        config trusthost
+{% for ip in opsview_ips %}
+            edit {{ loop.index }}
+                set ipv4-trusthost {{ ip }} 255.255.255.255
+            next
+{% endfor %}
+        end
+    next
+end
+config system global
+    set admin-sport {{ admin_port }}
+end
+config system interface
+{% for intf in wan_interfaces %}
+    edit "{{ intf }}"
+        append allowaccess https
+    next
+{% endfor %}
+end

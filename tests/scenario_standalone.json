@@ -1,0 +1,2 @@
+{"/cmdb/system/ha":{"mode":"standalone"},"/cmdb/system/sdwan":{"status":"disable","health-check":[]},
+ "/cmdb/switch-controller/managed-switch":[],"/cmdb/wireless-controller/wtp":[]}

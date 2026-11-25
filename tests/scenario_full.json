@@ -1,0 +1,4 @@
+{"/cmdb/system/ha":{"mode":"a-p"},"/monitor/system/ha-statistics":[{"serial_no":"FG70G1"}],
+ "/cmdb/system/sdwan":{"status":"enable","health-check":[{"name":"ping-isp"}]},
+ "/cmdb/switch-controller/managed-switch":[{"switch-id":"FSW-01","fsw-wan1-admin":"enable"},{"switch-id":"S108FNEW","fsw-wan1-admin":"discovered"}],
+ "/cmdb/wireless-controller/wtp":[{"wtp-id":"FP231G1","admin":"enable"},{"wtp-id":"FP231G2","admin":"enable"}]}

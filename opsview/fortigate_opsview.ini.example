@@ -1,0 +1,15 @@
+# /opt/opsview/monitoringscripts/etc/fortigate_opsview.ini
+# Brukes bare av discovery-modusen (lesetilgang til Opsview sitt REST-API).
+# chmod 640, eier opsview:opsview
+[opsview]
+url = https://opsview.example.no
+username = forti-discovery
+password = BYTT_MEG
+verify_tls = true
+
+# Overstyr malnavn hvis dere kaller dem noe annet i Opsview
+[templates]
+ha = FortiGate - HA
+sdwan = FortiGate - SD-WAN
+switch = FortiGate - FortiSwitch
+ap = FortiGate - FortiAP
